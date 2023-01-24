@@ -10,24 +10,39 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
-import static com.example.demo.util.FeedMapperHelper.getStopWords;
+import static com.example.demo.util.TextUtil.getStopWords;
+import static com.example.demo.util.TextUtil.split;
 
 @Slf4j
 @Component
 public class RSSFeedMapper {
+    public HashMap<Header, List<Item>> mapAndGetItems(List<Object> objects) {
+        log.info("mapping the fetch rss feeds to POJOs");
+        HashMap<Header, List<Item>> hashMap = new HashMap<>();
+        for (Object object : objects) {
+            Map<String, Object> channel = this.getChannel(object);
+            if (Objects.isNull(channel)) continue;
+
+            Header header = this.mapHeader(channel);
+            List<Item> items = this.mapItems(channel, header);
+
+            hashMap.put(header, items);
+        }
+        return hashMap;
+    }
+
     @SuppressWarnings("unchecked")
-    public List<Item> mapItems(Object object) {
+    private Map<String, Object> getChannel(Object object) {
         try {
             Map<String, Object> hashMap = (Map<String, Object>) object;
             if (hashMap == null || hashMap.isEmpty()) {
                 log.error("Data type miss match. Failed to map Object to Map. Object: {}", object);
                 return null;
             }
-            Map<String, Object> channel = (Map<String, Object>) hashMap.get("channel");
-            return this.mapItems(channel, this.getHeader(channel));
+            return (Map<String, Object>) hashMap.get("channel");
         } catch (Exception e) {
             log.error("Exception: {} occurred during parsing the object.", e.getMessage());
         }
@@ -43,28 +58,24 @@ public class RSSFeedMapper {
             return null;
         }
         return objectItems.stream()
-                .map(this::getItem)
+                .map(this::mapItem)
                 .map(item -> item.setHeader(header))
-                .collect(Collectors.toList());
+                .toList();
     }
 
-    private Item getItem(Map<String, Object> channel) {
+    private Item mapItem(Map<String, Object> channel) {
         Item item = new Item();
         item.setTitle(stringMapper(channel, "title"));
         item.setLink(stringMapper(channel, "link"));
-        item.setDescription(stringMapper(channel, "description"));
-
-        HashSet<String> words = Stream.of(item.getTitle().split(" "))
-                .filter(word -> !getStopWords().contains(word))
+        HashSet<String> words = split(item.getTitle())
                 .map(String::toLowerCase)
+                .filter(word -> !getStopWords().contains(word))
                 .collect(Collectors.toCollection(HashSet::new));
-
-        item.setDistinctWords(words);
-
+        item.setSeparatedWords(words);
         return item;
     }
 
-    private Header getHeader(Map<String, Object> channel) {
+    private Header mapHeader(Map<String, Object> channel) {
         Header header = new Header();
         header.setTitle(stringMapper(channel, "title"));
         header.setLink(stringMapper(channel, "link"));

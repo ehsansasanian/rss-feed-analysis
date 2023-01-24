@@ -20,6 +20,7 @@ public class RSSFeedGateway {
         ResponseEntity<Object> response;
 
         try {
+            log.info("fetching RSS feed for url: {}", url);
             response = restTemplate.getForEntity(url, Object.class);
         } catch (Exception e) {
             log.error("Exception with error: {} occurred for URL: {}", e.getMessage(), url);

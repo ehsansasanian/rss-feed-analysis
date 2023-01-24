@@ -1,6 +1,7 @@
 package com.example.demo.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -11,6 +12,7 @@ import jakarta.persistence.Table;
 import lombok.Data;
 
 import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "items")
@@ -22,18 +24,12 @@ public class Item {
 
     private String title;
 
+    @Column(columnDefinition = "varchar (1500)")
     private String link;
 
-    private String description;
+    private transient Set<String> separatedWords = new HashSet<>();
 
-    private transient HashSet<String> distinctWords = new HashSet<>();
-
-    @ManyToOne
-    @JsonIgnore
-    @JoinColumn(name = "analysis_result_id")
-    private AnalysisResult analysisResult;
-
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "header_id")
     private Header header;
 

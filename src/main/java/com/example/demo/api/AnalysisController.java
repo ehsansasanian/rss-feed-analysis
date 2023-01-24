@@ -33,6 +33,6 @@ public class AnalysisController {
 
     @GetMapping("/frequency/{uuid}")
     public ResponseEntity<AnalysisRequest> findAnalysisWithHighFrequencyItems(@PathVariable UUID uuid) {
-        return new ResponseEntity<>(analysisService.findAnalysisWithHighFrequencyItems(uuid), HttpStatus.OK);
+        return new ResponseEntity<>(analysisService.findAnalysisResult(uuid), HttpStatus.OK);
     }
 }

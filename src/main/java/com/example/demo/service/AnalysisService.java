@@ -8,5 +8,5 @@ import java.util.UUID;
 public interface AnalysisService {
     void analyze(AnalysisRequest analysisRequest, List<String> urls);
 
-    AnalysisRequest findAnalysisWithHighFrequencyItems(UUID uuid);
+    AnalysisRequest findAnalysisResult(UUID uuid);
 }
