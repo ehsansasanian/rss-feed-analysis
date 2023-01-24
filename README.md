@@ -10,14 +10,20 @@ This README describes an exercise to implement a hot topic analysis for RSS feed
 ### Getting Started
 1. Clone the repository:
 
-```git clone https://github.com/ehsansasanian/rss-feed-analysis.git```
+```
+git clone https://github.com/ehsansasanian/rss-feed-analysis.git
+```
 
 2. Change directory to the project:
-```cd rss-feed-analysis```
+```
+ cd rss-feed-analysis
+```
 
    
 3. Run the app
-```mvn clean spring-boot:run```
+```
+mvn clean spring-boot:run
+```
 
 ### API:
 
@@ -39,7 +45,9 @@ Takes an id as input and returns the top three most frequent hot topics from the
 
 Example CURL:
 
-```curl --location --request GET 'localhost:8080/analyse/frequency/20a597b7-66c4-4b16-8ea3-30d922c16930'```
+```
+curl --location --request GET 'localhost:8080/analyse/frequency/20a597b7-66c4-4b16-8ea3-30d922c16930'
+```
 
 ### NOTE
 Additional libraries may be added as needed, but no external software should need to be installed.
